@@ -1,0 +1,23 @@
+{
+  "name": "meta_unary_add",
+  "alphabet": ["1", ".", "+", "=", "{", "}", ":", ",", "\"", "n", "y"],
+  "blank": ".",
+  "states": [
+    "dummy_start",
+    "write_no",
+    "HALT"
+  ],
+  "initial": "dummy_start",
+  "finals": ["HALT"],
+  "transitions": {
+    "dummy_start": [
+      { "read": ".", "to_state": "write_no", "write": ".", "action": "RIGHT" }
+    ],
+    "write_no": [
+      { "read": ".", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+    ]
+  }
+}
+
+
+
