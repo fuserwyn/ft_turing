@@ -36,7 +36,23 @@ The directory `machines/` contains several example Turing machines:
 - `palindrome.json` – decides if input over `{0,1}` is a palindrome; writes `y` or `n` at the right end.
 - `zero_n_one_n.json` – decides if input is in the language `0^n1^n`; writes `y` or `n`.
 - `zero_2n.json` – decides if input is in the language `0^{2n}`; writes `y` or `n`.
-- `meta_unary_add.json` – placeholder meta-machine that formally satisfies the JSON format.
+- `meta_unary_add.json` – encoded unary-add runner.
+
+### `meta_unary_add` encoding
+
+`meta_unary_add` expects input in the form:
+
+```text
+m...m|<unary_add_payload>
+```
+
+Where:
+
+- `m...m` is the encoded metadata area (chosen encoding).
+- `|` separates metadata from the payload.
+- `<unary_add_payload>` is the unary addition input (for example `111+11=`).
+
+If the `|` separator is missing, the machine writes `n` and halts.
 
 ### Run examples
 
@@ -57,6 +73,9 @@ cd "/Users/lofitravel/Desktop/IT 42/ft_turing"
 
 # 0^{2n}
 ./ft_turing machines/zero_2n.json "0000"
+
+# Meta unary_add (encoded input)
+./ft_turing machines/meta_unary_add.json "mmm|111+11="
 ```
 
 Each run prints:
