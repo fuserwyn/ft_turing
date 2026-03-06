@@ -52,31 +52,36 @@ func LoadMachineFromFile(path string) (*Machine, error) {
 	if err := m.Validate(); err != nil {
 		return nil, err
 	}
-	m.buildIndexes()
-	return &m, nil
+	indexed := m.withIndexes()
+	return &indexed, nil
 }
 
-func (m *Machine) buildIndexes() {
-	m.alphaSet = make(map[string]struct{}, len(m.Alphabet))
-	for _, a := range m.Alphabet {
-		m.alphaSet[a] = struct{}{}
+func (m Machine) withIndexes() Machine {
+	m.alphaSet = toSet(m.Alphabet)
+	m.stateSet = toSet(m.States)
+	m.finalsSet = toSet(m.Finals)
+	m.transIndex = toTransitionIndex(m.Transitions)
+	return m
+}
+
+func toSet(items []string) map[string]struct{} {
+	out := make(map[string]struct{}, len(items))
+	for _, item := range items {
+		out[item] = struct{}{}
 	}
-	m.stateSet = make(map[string]struct{}, len(m.States))
-	for _, s := range m.States {
-		m.stateSet[s] = struct{}{}
-	}
-	m.finalsSet = make(map[string]struct{}, len(m.Finals))
-	for _, f := range m.Finals {
-		m.finalsSet[f] = struct{}{}
-	}
-	m.transIndex = make(map[string]map[string]Transition, len(m.Transitions))
-	for state, list := range m.Transitions {
-		idx := make(map[string]Transition, len(list))
+	return out
+}
+
+func toTransitionIndex(transitions map[string][]Transition) map[string]map[string]Transition {
+	out := make(map[string]map[string]Transition, len(transitions))
+	for state, list := range transitions {
+		byRead := make(map[string]Transition, len(list))
 		for _, t := range list {
-			idx[t.Read] = t
+			byRead[t.Read] = t
 		}
-		m.transIndex[state] = idx
+		out[state] = byRead
 	}
+	return out
 }
 
 func (m *Machine) Validate() error {
@@ -153,22 +158,21 @@ func (m *Machine) Validate() error {
 	return nil
 }
 
-func (m *Machine) ValidateInput(input string) error {
+func (m Machine) ValidateInput(input string) error {
+	alphaSet := m.alphaSet
+	if alphaSet == nil {
+		alphaSet = toSet(m.Alphabet)
+	}
+
 	// Input must not contain blank symbol
 	if strings.Contains(input, m.Blank) {
 		return fmt.Errorf("input must not contain blank symbol %q", m.Blank)
 	}
+
 	// Every rune must be in alphabet
 	for _, r := range input {
 		s := string(r)
-		found := false
-		for _, a := range m.Alphabet {
-			if a == s {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if _, ok := alphaSet[s]; !ok {
 			return fmt.Errorf("input contains symbol %q not in alphabet", s)
 		}
 	}
