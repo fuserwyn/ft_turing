@@ -1,24 +1,27 @@
-## ft_turing (Go implementation)
+## ft_turing (Python implementation)
 
-This is an implementation of the `ft_turing` project (single-tape, single-head Turing machine simulator) in Go, based on the specification in `en.subject (1).pdf`.
+This project is a Python implementation of a single-tape, single-head Turing machine simulator.
 
 ### Requirements
 
-- Go 1.20+ (or any recent stable Go).
+- Python 3.10+ (`python3`)
 
 ### Build
 
 ```bash
-cd "/Users/lofitravel/Desktop/IT 42/ft_turing"
-go build .
+cd "/Users/lofitravel/Desktop/IT 42/ft_turing/ft_turing"
+make
 ```
 
-This produces the executable `ft_turing` in the current directory.
+This builds `./ft_turing`.
 
 ### Usage
 
-```text
+```bash
 ./ft_turing --help
+```
+
+```text
 usage: ft_turing [-h] jsonfile input
 positional arguments:
   jsonfile   json description of the machine
@@ -57,7 +60,7 @@ If the `|` separator is missing, the machine writes `n` and halts.
 ### Run examples
 
 ```bash
-cd "/Users/lofitravel/Desktop/IT 42/ft_turing"
+cd "/Users/lofitravel/Desktop/IT 42/ft_turing/ft_turing"
 
 # Unary subtraction
 ./ft_turing machines/unary_sub.json "111-11="
